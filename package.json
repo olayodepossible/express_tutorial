@@ -4,6 +4,10 @@
   "description": "A system for student to access tutorials and some academic materials",
   "main": "index.js",
   "scripts": {
+    "start": "node server.js",
+    "dev": "DEBUG=*.js nodemon app.js",
+    "keygen": "node api-keygen.js",
+    "debug": "node inspect app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "olayodepossible",

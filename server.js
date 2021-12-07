@@ -1,4 +1,5 @@
 const express = require("express");
+const db = require("./models");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 
@@ -21,8 +22,17 @@ app.get("/", (req, res) => {
   res.json({ message: "Welcome to student tutorial app service." });
 });
 
+// db config
+db.sequelize.sync();
+// drop existing table
+/* db.sequelize.sync({ force: true }).then(() => {
+  console.log("Drop and re-sync db.");
+}); */
+
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });
+
+
