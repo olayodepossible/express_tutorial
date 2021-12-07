@@ -1,5 +1,5 @@
 // const config = require('../../config/routes.js')
-const tutorialService = require("../../services/tutorialService.js")
+const tutorialService = require("../services/tutorialService.js")
 
 // Create and Save a new Tutorial
 exports.create = (req, res) => {
@@ -9,7 +9,7 @@ exports.create = (req, res) => {
 
 // Retrieve all Tutorials from the database.
 exports.findAll = (req, res) => {
-    return tutorialService.findAll(req);
+    return tutorialService.findAll(req).then();
   
 };
 
