@@ -2,10 +2,10 @@ const db = require("../models");
 const Tutorial = db.tutorials;
 const Op = db.Sequelize.Op;
 
-exports.create = (req, res) => {
+module.exports.create = async(req, res) => {
     // Validate request
     if (!req.body.title) {
-      res.status(400).send({
+      res.status(400).json({
         message: "Content can not be empty!"
       });
       return;
@@ -19,114 +19,144 @@ exports.create = (req, res) => {
     };
   
     // Save Tutorial in the database
-    Tutorial.create(tutorial)
-      .then(data => {
+    return await Tutorial.create(tutorial)
+      /* .then(data => {
         console.info("Tutorial created")
-        res.send(data);
+       return  res.send(data);
       })
       .catch(err => {
-        res.status(500).send({
-          message:
-            err.message || "Some error occurred while creating the Tutorial."
+       return  res.status(500).json({
+          message: err.message || "Some error occurred while creating the Tutorial."
         });
-    });
+    }); */
 };
 
-exports.findAll = (req, res) => {
-    const title = req.query.title;
-    var condition = title ? { title: { [Op.iLike]: `%${title}%` } } : null;
+exports.findAll = async(req, res) => {
+    try {
+        const title = req.query.title;
+        var condition = title ? { title: { [Op.iLike]: `%${title}%` } } : null;
   
-    Tutorial.findAll({ where: condition })
-      .then(data => {
-        res.send(data);
-      })
-      .catch(err => {
-        res.status(500).send({
-          message:
-            err.message || "Some error occurred while retrieving tutorials."
-        });
-      });
+    const data = await Tutorial.findAll({ where: condition })
+       return  res.send(data);
+      
+    } catch (err) {
+        return  res.status(500).json({
+            message:
+                err.message || "Some error occurred while retrieving tutorials."
+            });
+        
+    }
+    
 };
 
-exports.findOne = (req, res) => {
+exports.findOne = async(req, res) => {
     const id = req.params.id;
-  
-    Tutorial.findByPk(id)
-      .then(data => {
+    try {
+       const data = await Tutorial.findByPk(id)
         if (data) {
-          res.send(data);
+         return  res.send(data);
         } else {
-          res.status(404).send({
+         return  res.status(404).send({
             message: `Cannot find Tutorial with id=${id}.`
           });
         }
-      })
-      .catch(err => {
-        res.status(500).send({
-          message: "Error retrieving Tutorial with id=" + id
-        });
-      });
+    } catch (err) {
+        return res.status(500).json({
+            message: "Error retrieving Tutorial with id=" + id,
+            error: err
+          });
+        
+    }
+  
+    
 };
 
 
-exports.update = (req, res) => {
+exports.update = async(req, res) => {
     const id = req.params.id;
+
+    try {
+       const num = await Tutorial.update(req.body, {
+            where: { id: id }
+          })
+            
+              if (num == 1) {
+               return  res.send({
+                  message: "Tutorial was updated successfully."
+                });
+              } else {
+               return  res.send({
+                  message: `Cannot update Tutorial with id=${id}. Maybe Tutorial was not found or req.body is empty!`
+                });
+              }
+    } catch (err) {
+        return  res.status(500).json({
+            message: "Error updating Tutorial with id=" + id,
+            error: err
+          });
+        
+    }
   
-    Tutorial.update(req.body, {
-      where: { id: id }
-    })
-      .then(num => {
-        if (num == 1) {
-          res.send({
-            message: "Tutorial was updated successfully."
-          });
-        } else {
-          res.send({
-            message: `Cannot update Tutorial with id=${id}. Maybe Tutorial was not found or req.body is empty!`
-          });
-        }
-      })
-      .catch(err => {
-        res.status(500).send({
-          message: "Error updating Tutorial with id=" + id
-        });
-      });
+   
 };
 
 
-exports.delete = (req, res) => {
+exports.delete = async(req, res) => {
     const id = req.params.id;
-  
-    Tutorial.destroy({
-      where: { id: id }
-    })
-      .then(num => {
+
+    try {
+       const num = await Tutorial.destroy({
+            where: { id: id }
+          })
+           
+        console.info("Value return from delete: ", num)
         if (num == 1) {
-          res.send({
+            return res.send({
             message: "Tutorial was deleted successfully!"
-          });
-        } else {
-          res.send({
-            message: `Cannot delete Tutorial with id=${id}. Maybe Tutorial was not found!`
-          });
-        }
-      })
-      .catch(err => {
-        res.status(500).send({
-          message: "Could not delete Tutorial with id=" + id
         });
-      });
+        } else {
+        return res.send({
+            message: `Cannot delete Tutorial with id=${id}. Maybe Tutorial was not found!`
+        });
+        }
+    } catch (err) {
+        return res.status(500).json({
+            message: "Could not delete Tutorial with id=" + id, 
+            error : err
+          });
+    }
+  
+    
     };
 
-    exports.findAllPublished = (req, res) => {
-        Tutorial.findAll({ where: { published: true } })
-          .then(data => {
-            res.send(data);
-          })
-          .catch(err => {
-            res.status(500).send({
-              message:
-                err.message || "Some error occurred while retrieving tutorials."
-            });
-          });
+    exports.deleteAll = async (req, res) => {
+        try {
+            const nums = await Tutorial.destroy({
+                where: {},
+                truncate: false
+              })
+      
+              return  res.send({ message: `${nums} Tutorials were deleted successfully!` });
+        } catch (error) {
+            return  res.status(500).json({
+                message:
+                  err.message || "Some error occurred while removing all tutorials."
+              });
+        }
+       
+           
+         
+      };
+
+    exports.findAllPublished = async(req, res) => {
+        try {
+           const data = await Tutorial.findAll({ where: { published: true } })
+           return  res.send(data);
+        } catch (err) {
+            return  res.status(500).json({
+                message: err.message || "Some error occurred while retrieving tutorials."
+              });
+        }
+        
+          
       };

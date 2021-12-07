@@ -3,38 +3,86 @@ const tutorialService = require("../services/tutorialService.js")
 
 // Create and Save a new Tutorial
 exports.create = (req, res) => {
-  return tutorialService.create(req)
+  tutorialService.create(req, res).then((result) => {
+    return res.status(201).json(result);
+  })
+  .catch((err) => {
+    console.info("ERROR: ", err)
+    return res.json(err);
+  });
   
 };
 
 // Retrieve all Tutorials from the database.
 exports.findAll = (req, res) => {
-    return tutorialService.findAll(req).then();
+    tutorialService.findAll(req, res)
+    .then((result) => {
+        return res.status(200).json(result);
+      })
+      .catch((err) => {
+        console.info("ERROR: ", err)
+        return res.json(err);
+      });
   
 };
 
 // Find a single Tutorial with an id
 exports.findOne = (req, res) => {
-    return tutorialService.findOne(req)
+    tutorialService.findOne(req, res)
+    .then((result) => {
+        return res.status(200).json(result);
+      })
+      .catch((err) => {
+        console.info("ERROR: ", err)
+        return res.json(err);
+      });
   
 };
 
 // Update a Tutorial by the id in the request
 exports.update = (req, res) => {
-  return tutorialService.update(req)
+    tutorialService.update(req, res)
+    .then((result) => {
+        return res.status(200).json(result);
+      })
+      .catch((err) => {
+        console.info("ERROR: ", err)
+        return res.json(err);
+      });
 };
 
 // Delete a Tutorial with the specified id in the request
 exports.delete = (req, res) => {
-   return tutorialService.delete(req);
+    tutorialService.delete(req, res)
+    .then((result) => {
+        return res.status(200).json(result);
+      })
+      .catch((err) => {
+        console.info("ERROR: ", err)
+        return res.json(err);
+      });
 };
 
 // Delete all Tutorials from the database.
 exports.deleteAll = (req, res) => {
-  return tutorialService.deleteAll(req);
+    tutorialService.deleteAll(req, res)
+    .then((result) => {
+        return res.status(200).json(result);
+      })
+      .catch((err) => {
+        console.info("ERROR: ", err)
+        return res.json(err);
+      });
 };
 
 // Find all published Tutorials
 exports.findAllPublished = (req, res) => {
-  return tutorialService.findAllPublished(req)
+   tutorialService.findAllPublished(req, res)
+   .then((result) => {
+    return res.status(200).json(result);
+  })
+  .catch((err) => {
+    console.info("ERROR: ", err)
+    return res.json(err);
+  });
 };
