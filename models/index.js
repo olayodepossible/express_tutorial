@@ -26,7 +26,7 @@ db.students = require("./student.js")(sequelize, Sequelize);
 
 db.students.hasMany(db.tutorials, { as: "tutorial", onDelete: 'CASCADE' });
 db.tutorials.belongsTo(db.students, {
-  foreignKey: "student_id",
+  foreignKey: "studentId",
   as: "student",
   allowNull: false
 });
