@@ -1,4 +1,5 @@
 const db = require("../models");
+const studentService = require("../services/studentService.js")
 const Tutorial = db.tutorials;
 const Student = db.students;
 const Op = db.Sequelize.Op;
@@ -11,12 +12,15 @@ module.exports.createTutorial = async(req, res) => {
       });
       return;
     }
+
+    const student = await studentService.findOneStudent(req, res);
   
     // Create a Tutorial
     const tutorial = {
       title: req.body.title,
       description: req.body.description,
-      published: req.body.published ? req.body.published : false
+      published: req.body.published ? req.body.published : false,
+      student_id: student.id
     };
   
     // Save Tutorial in the database
@@ -30,48 +34,13 @@ module.exports.createTutorial = async(req, res) => {
     }
 };
 
- // Create a Student
-exports.createStudent = async(req, res) => {
-    const tutorialId = this.findOneTutorial(req, res);
-    const student  = req.body;
-    console.info("***** TEST ID *****", tutorialId.id)
-    try {
-        const data = await Student.create({
-            name: student.name,
-            age: student.age,
-            level: student.level,
-            tutorialId: tutorialId.id,
-          });
-
-        console.log(">> Student Created : " + JSON.stringify(data));
-        return data;
-    } catch (err) {
-        return  res.status(500).json({
-            message: err.message || "Some error occurred while creating the Tutorial.",
-            error: err
-        });
-    }
-  };
-
-  exports.findStudentById = async (req, res) => {
-    const id = req.params.id;
-      try {
-          return await Student.findByPk(id, { include: ["tutorial"] })
-      } catch (err) {
-        return  res.status(404).json({
-            message: err.message || "Some error occurred while fetching the Student.",
-            error: err
-        });
-      }
-  };
-
 
 exports.findAllTutorial = async(req, res) => {
     try {
         const title = req.query.title;
         var condition = title ? { title: { [Op.iLike]: `%${title}%` } } : null;
   
-    const data = await Tutorial.findAll({ where: condition }, { include: ["comments"],})
+    const data = await Tutorial.findAll({ where: condition }, { include: ["students"],})
        return  res.send(data);
       
     } catch (err) {
@@ -84,7 +53,7 @@ exports.findAllTutorial = async(req, res) => {
     
 };
 
-exports.findOneTutorial = async(req, res) => {
+exports.findOneTutorial = async (req, res) => {
     const id = req.params.id;
     try {
        const data = await Tutorial.findByPk(id, {include: ["students"]})
@@ -105,7 +74,6 @@ exports.findOneTutorial = async(req, res) => {
   
     
 };
-
 
 exports.updateTutorial = async(req, res) => {
     const id = req.params.id;
@@ -162,36 +130,36 @@ exports.deleteTutorial = async(req, res) => {
     }
   
     
-    };
+};
 
-    exports.deleteAllTutorial= async (req, res) => {
-        try {
-            const nums = await Tutorial.destroy({
-                where: {},
-                truncate: false
-              })
-      
-              return  res.send({ message: `${nums} Tutorials were deleted successfully!` });
-        } catch (error) {
-            return  res.status(500).json({
-                message:
-                  err.message || "Some error occurred while removing all tutorials."
-              });
-        }
-       
-           
-         
-      };
-
-    exports.findAllPublishedTutorial = async(req, res) => {
-        try {
-           const data = await Tutorial.findAll({ where: { published: true } })
-           return  res.send(data);
-        } catch (err) {
-            return  res.status(500).json({
-                message: err.message || "Some error occurred while retrieving tutorials."
-              });
-        }
+exports.deleteAllTutorial= async (req, res) => {
+    try {
+        const nums = await Tutorial.destroy({
+            where: {},
+            truncate: false
+            })
+    
+            return  res.send({ message: `${nums} Tutorials were deleted successfully!` });
+    } catch (error) {
+        return  res.status(500).json({
+            message:
+                err.message || "Some error occurred while removing all tutorials."
+            });
+    }
+    
         
-          
-      };
+        
+};
+
+exports.findAllPublishedTutorial = async(req, res) => {
+    try {
+        const data = await Tutorial.findAll({ where: { published: true } })
+        return  res.send(data);
+    } catch (err) {
+        return  res.status(500).json({
+            message: err.message || "Some error occurred while retrieving tutorials."
+            });
+    }
+    
+        
+};

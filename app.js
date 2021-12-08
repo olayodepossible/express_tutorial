@@ -27,10 +27,10 @@ app.get("/", (req, res) => {
 
 // db config
 db.sequelize.sync();
-/* // drop existing table
+ // drop existing table
  db.sequelize.sync({ force: true }).then(() => {
   console.log("Drop and re-sync db.");
-}); */
+}); 
 
 
 require("./config/routes.js")(app);
