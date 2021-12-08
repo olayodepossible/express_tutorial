@@ -8,6 +8,9 @@ const app = express();
 var corsOptions = {
   origin: "http://localhost:8081"
 };
+const run = async () => {
+
+}; 
 
 app.use(cors(corsOptions));
 
@@ -24,10 +27,11 @@ app.get("/", (req, res) => {
 
 // db config
 db.sequelize.sync();
-// drop existing table
-/* db.sequelize.sync({ force: true }).then(() => {
+/* // drop existing table
+ db.sequelize.sync({ force: true }).then(() => {
   console.log("Drop and re-sync db.");
 }); */
+
 
 require("./config/routes.js")(app);
 

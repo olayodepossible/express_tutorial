@@ -2,8 +2,8 @@
 const tutorialService = require("../services/tutorialService.js")
 
 // Create and Save a new Tutorial
-exports.create = (req, res) => {
-  tutorialService.create(req, res).then((result) => {
+exports.createTutorial = (req, res) => {
+  tutorialService.createTutorial(req, res).then((result) => {
     return res.status(201).json(result);
   })
   .catch((err) => {
@@ -13,9 +13,21 @@ exports.create = (req, res) => {
   
 };
 
+// Create and Save a new Student
+exports.createStudent = (req, res) => {
+    tutorialService.createStudent(req, res).then((result) => {
+      return res.status(201).json(result);
+    })
+    .catch((err) => {
+      console.info("ERROR: ", err)
+      return res.json(err);
+    });
+    
+  };
+
 // Retrieve all Tutorials from the database.
-exports.findAll = (req, res) => {
-    tutorialService.findAll(req, res)
+exports.findAllTutorial = (req, res) => {
+    tutorialService.findAllTutorial(req, res)
     .then((result) => {
         return res.status(200).json(result);
       })
@@ -27,8 +39,21 @@ exports.findAll = (req, res) => {
 };
 
 // Find a single Tutorial with an id
-exports.findOne = (req, res) => {
-    tutorialService.findOne(req, res)
+exports.findOneTutorial = (req, res) => {
+    tutorialService.findOneTutorial(req, res)
+    .then((result) => {
+        return res.status(200).json(result);
+      })
+      .catch((err) => {
+        console.info("ERROR: ", err)
+        return res.json(err);
+      });
+  
+};
+
+// Find a Student with an id
+exports.findStudentById = (req, res) => {
+    tutorialService.findStudentById(req, res)
     .then((result) => {
         return res.status(200).json(result);
       })
@@ -40,8 +65,8 @@ exports.findOne = (req, res) => {
 };
 
 // Update a Tutorial by the id in the request
-exports.update = (req, res) => {
-    tutorialService.update(req, res)
+exports.updateTutorial = (req, res) => {
+    tutorialService.updateTutorial(req, res)
     .then((result) => {
         return res.status(200).json(result);
       })
@@ -52,8 +77,8 @@ exports.update = (req, res) => {
 };
 
 // Delete a Tutorial with the specified id in the request
-exports.delete = (req, res) => {
-    tutorialService.delete(req, res)
+exports.deleteTutorial = (req, res) => {
+    tutorialService.deleteTutorial(req, res)
     .then((result) => {
         return res.status(200).json(result);
       })
@@ -64,8 +89,8 @@ exports.delete = (req, res) => {
 };
 
 // Delete all Tutorials from the database.
-exports.deleteAll = (req, res) => {
-    tutorialService.deleteAll(req, res)
+exports.deleteAllTutorial = (req, res) => {
+    tutorialService.deleteAllTutorial(req, res)
     .then((result) => {
         return res.status(200).json(result);
       })
@@ -76,8 +101,8 @@ exports.deleteAll = (req, res) => {
 };
 
 // Find all published Tutorials
-exports.findAllPublished = (req, res) => {
-   tutorialService.findAllPublished(req, res)
+exports.findAllPublishedTutorial = (req, res) => {
+   tutorialService.findAllPublishedTutorial(req, res)
    .then((result) => {
     return res.status(200).json(result);
   })
