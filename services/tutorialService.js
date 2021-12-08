@@ -11,6 +11,8 @@ module.exports.createTutorial = async(req, res) => {
       });
       return;
     }
+
+    const student = await this.findOneStudent(req.params.id, res);
   
     // Create a Tutorial
     const tutorial = {
@@ -65,6 +67,27 @@ exports.createStudent = async(req, res) => {
       }
   };
 
+  exports.findOneStudent = async(req, res) => {
+    const id = req.params.id;
+    try {
+       const data = await Student.findByPk(id)
+        if (data) {
+         return  res.send(data);
+        } else {
+         return  res.status(404).send({
+            message: `Cannot find Student with id=${id}.`
+          });
+        }
+    } catch (err) {
+        return res.status(500).json({
+            message: "Error retrieving Student with id=" + id,
+            error: err
+          });
+        
+    }
+  
+    
+};
 
 exports.findAllTutorial = async(req, res) => {
     try {
@@ -105,6 +128,7 @@ exports.findOneTutorial = async(req, res) => {
   
     
 };
+
 
 
 exports.updateTutorial = async(req, res) => {
