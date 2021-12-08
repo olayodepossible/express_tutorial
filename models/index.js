@@ -21,5 +21,18 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 db.tutorials = require("./tutorial.js")(sequelize, Sequelize);
+db.students = require("./student.js")(sequelize, Sequelize);
+
+
+db.tutorials.hasMany(db.students, { as: "students" });
+db.students.belongsTo(db.tutorials, {
+  foreignKey: "tutorialId",
+  as: "tutorial",
+});
+
 
 module.exports = db;
+
+
+
+

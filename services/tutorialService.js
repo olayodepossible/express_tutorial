@@ -1,8 +1,9 @@
 const db = require("../models");
 const Tutorial = db.tutorials;
+const Student = db.students;
 const Op = db.Sequelize.Op;
 
-module.exports.create = async(req, res) => {
+module.exports.createTutorial = async(req, res) => {
     // Validate request
     if (!req.body.title) {
       res.status(400).json({
@@ -19,24 +20,58 @@ module.exports.create = async(req, res) => {
     };
   
     // Save Tutorial in the database
-    return await Tutorial.create(tutorial)
-      /* .then(data => {
-        console.info("Tutorial created")
-       return  res.send(data);
-      })
-      .catch(err => {
-       return  res.status(500).json({
-          message: err.message || "Some error occurred while creating the Tutorial."
-        });
-    }); */
+    try {
+        return await Tutorial.create(tutorial)
+    } catch (err) {
+        return  res.status(500).json({
+            message: err.message || "Some error occurred while creating the Tutorial.",
+            error: err
+          });
+    }
 };
 
-exports.findAll = async(req, res) => {
+ // Create a Student
+exports.createStudent = async(req, res) => {
+    const tutorialId = this.findOneTutorial(req, res);
+    const student  = req.body;
+    console.info("***** TEST ID *****", tutorialId.id)
+    try {
+        const data = await Student.create({
+            name: student.name,
+            age: student.age,
+            level: student.level,
+            tutorialId: tutorialId.id,
+          });
+
+        console.log(">> Student Created : " + JSON.stringify(data));
+        return data;
+    } catch (err) {
+        return  res.status(500).json({
+            message: err.message || "Some error occurred while creating the Tutorial.",
+            error: err
+        });
+    }
+  };
+
+  exports.findStudentById = async (req, res) => {
+    const id = req.params.id;
+      try {
+          return await Student.findByPk(id, { include: ["tutorial"] })
+      } catch (err) {
+        return  res.status(404).json({
+            message: err.message || "Some error occurred while fetching the Student.",
+            error: err
+        });
+      }
+  };
+
+
+exports.findAllTutorial = async(req, res) => {
     try {
         const title = req.query.title;
         var condition = title ? { title: { [Op.iLike]: `%${title}%` } } : null;
   
-    const data = await Tutorial.findAll({ where: condition })
+    const data = await Tutorial.findAll({ where: condition }, { include: ["comments"],})
        return  res.send(data);
       
     } catch (err) {
@@ -49,10 +84,10 @@ exports.findAll = async(req, res) => {
     
 };
 
-exports.findOne = async(req, res) => {
+exports.findOneTutorial = async(req, res) => {
     const id = req.params.id;
     try {
-       const data = await Tutorial.findByPk(id)
+       const data = await Tutorial.findByPk(id, {include: ["students"]})
         if (data) {
          return  res.send(data);
         } else {
@@ -72,7 +107,7 @@ exports.findOne = async(req, res) => {
 };
 
 
-exports.update = async(req, res) => {
+exports.updateTutorial = async(req, res) => {
     const id = req.params.id;
 
     try {
@@ -101,7 +136,7 @@ exports.update = async(req, res) => {
 };
 
 
-exports.delete = async(req, res) => {
+exports.deleteTutorial = async(req, res) => {
     const id = req.params.id;
 
     try {
@@ -129,7 +164,7 @@ exports.delete = async(req, res) => {
     
     };
 
-    exports.deleteAll = async (req, res) => {
+    exports.deleteAllTutorial= async (req, res) => {
         try {
             const nums = await Tutorial.destroy({
                 where: {},
@@ -148,7 +183,7 @@ exports.delete = async(req, res) => {
          
       };
 
-    exports.findAllPublished = async(req, res) => {
+    exports.findAllPublishedTutorial = async(req, res) => {
         try {
            const data = await Tutorial.findAll({ where: { published: true } })
            return  res.send(data);
